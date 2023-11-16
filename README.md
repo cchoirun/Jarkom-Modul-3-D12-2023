@@ -249,7 +249,6 @@ service php8.0-fpm start
 
 ### Soal 1
 Semua CLIENTS harus menggunakan konfigurasi dari DHCP Server.
-Register domain berupa riegel.canyon.d12.com untuk worker Laravel dan granz.channel.d12.com untuk worker PHP,
 sehinnga jalankan command berikut (no1.sh) di DNS Server (Heiter):
 ```
 echo 'zone "riegel.canyon.d12.com" {
@@ -362,3 +361,41 @@ Restart node Clients dengan sehinnga memiliki IP
 
 ![Screenshot 2023-11-16 172129](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/6dea8b54-e6e9-46d4-834a-9cdb7fb3f45f)
 
+### Soal 6
+Pada masing-masing worker PHP, lakukan konfigurasi virtual host untuk website berikut dengan menggunakan php 7.3.
+
+Setelah kita melakukan setup terhadap seluruh PHP worker, maka kita dapat mendownload file dan unzip menggunakan tools ```wget```
+```
+wget -O '/var/www/granz.channel.d12.com' 'https://drive.google.com/u/0/uc?id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1&export=download'
+unzip -o /var/www/granz.channel.d12.com -d /var/www/
+rm /var/www/granz.channel.d12.com
+mv /var/www/modul-3 /var/www/granz.channel.d12.com
+```
+
+Setelah itu kia dapat mengkonfigurasi ```nginx```
+```
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/granz.channel.d12.com
+ln -s /etc/nginx/sites-available/granz.channel.d12.com /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+
+echo 'server {
+    listen 80;
+    server_name _;
+
+    root /var/www/granz.channel.d12.com;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php7.3-fpm.sock; 
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}' > /etc/nginx/sites-available/granz.channel.d12.com
+
+service nginx restart
+```
