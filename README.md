@@ -399,3 +399,29 @@ echo 'server {
 
 service nginx restart
 ```
+### Soal 13
+```
+echo '# This group is read both by the client and the server
+# use it for options that affect everything
+[client-server]
+
+# Import all .cnf files from configuration directory
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/mariadb.conf.d/
+
+# Options affecting the MySQL server (mysqld)
+[mysqld]
+skip-networking=0
+skip-bind-address
+' > /etc/mysql/my.cnf
+```
+<ul>
+<li>Ubah bind-address  = 0.0.0.0</li>
+<li>service mysql restart</li>
+</ul>
+
+jalankan command:
+![Screenshot 2023-11-16 201107](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/d2abc88d-78dd-48b0-8e31-c099773b42ef)
+![Screenshot 2023-11-16 201544](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/758ca6d4-7a63-45ce-a48d-3c26a6b5a10e)
+
+
