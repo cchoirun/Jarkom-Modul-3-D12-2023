@@ -166,24 +166,90 @@ INTERFACES = "eth1 eth2 eth3 eth4"
 OPTIONS = ""
 ```
 
-### Himmel
-DHCP Server
-```
-apt-get update
-apt-get install isc-dhcp-server -y
-```
-
 ### Heiter
 DNS Server
 ```
+echo nameserver 192.197.122.1 > /etc/resolv.conf
 apt-get update
 apt-get install bind9 -y
 ```
 
+### Himmel
+DHCP Server
+```
+echo nameserver 192.197.122.1 > /etc/resolv.conf
+apt-get update
+apt-get install isc-dhcp-server -y
+```
+
+### Denken
+Database Server
+```
+echo 'nameserver 192.197.1.2' > /etc/resolv.conf
+apt-get update
+apt-get install mariadb-server -y
+service mysql start
+```
+
+### Eisen
+Load Balancer
+```
+echo nameserver 192.197.1.2 > /etc/resolv.conf
+apt-get update
+apt-get install apcahe2-utils -y
+apt-get install nginx -y
+apt-get install lynx -y
+```
+
+### Lawine, Linie, dan Lugner
+PHP worker
+```
+echo 'nameserver 192.197.1.2' > /etc/resolv.conf
+apt-get update
+apt-get install nginx -y
+apt-get install wget -y
+apt-get install unzip -y
+apt-get install lynx -y
+apt-get install htop -y
+apt-get install apache2-utils -y
+apt-get install php7.3-fpm php7.3-common php7.3-mysql php7.3-gmp php7.3-curl php7.3-intl php7.3-mbstring php7.3-xmlrpc php7.3-gd php7.3-xml php7.3-cli php7.3-zip -y
+
+service nginx start
+service php7.3-fpm start
+```
+### Revolte, Ricter, Sein, Stark
+Clients
+```
+apt update
+apt install lynx -y
+apt install htop -y
+apt install apache2-utils -y
+apt-get install jq -y
+```
+
+### Frieren, Flamme, Fern
+Laravel Workers
+```
+echo 'nameserver 192.197.1.2' > /etc/resolv.conf
+apt-get update
+apt-get install lynx -y
+apt-get install mariadb-client -y
+# Test connection from worker to database
+# mariadb --host=192.197.2.1 --port=3306   --user=kelompokd12 --password=passwordd12 dbkelompokd12 -e "SHOW DATABASES;"
+apt-get install -y lsb-release ca-certificates a   apt-transport-https software-properties-common gnupg2
+curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+apt-get update
+apt-get install php8.0-mbstring php8.0-xml php8.0-cli   php8.0-common php8.0-intl php8.0-opcache php8.0-readline php8.0-mysql php8.0-fpm php8.0-curl unzip wget -y
+apt-get install nginx -y
+
+service nginx start
+service php8.0-fpm start
+```
 
 ### Soal 1
 Semua CLIENTS harus menggunakan konfigurasi dari DHCP Server.
-Register domain berupa riegel.canyon.a09.com untuk worker Laravel dan granz.channel.a09.com untuk worker PHP,
+Register domain berupa riegel.canyon.d12.com untuk worker Laravel dan granz.channel.d12.com untuk worker PHP,
 sehinnga jalankan command berikut (no1.sh) di DNS Server (Heiter):
 ```
 echo 'zone "riegel.canyon.d12.com" {
