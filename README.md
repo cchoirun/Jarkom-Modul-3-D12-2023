@@ -402,6 +402,7 @@ echo 'server {
 service nginx restart
 ```
 ### Soal 13
+Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern. 
 ```
 echo '# This group is read both by the client and the server
 # use it for options that affect everything
@@ -426,4 +427,25 @@ jalankan command:
 ![Screenshot 2023-11-16 201107](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/d2abc88d-78dd-48b0-8e31-c099773b42ef)
 ![Screenshot 2023-11-16 201544](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/758ca6d4-7a63-45ce-a48d-3c26a6b5a10e)
 
+### Soal 14
+ Pada Frieren, FLamme, dan Fern masukkan command berikut : 
+Jalankan command:
+![Screenshot 2023-11-19 205534](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/e2a3ea3d-1d88-4db5-88d0-10113a672f23)
+Kemudian, konfigurasi pada setiap worker:
+![Screenshot 2023-11-19 205746](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/c4bea98b-022a-4f33-833c-d53404073056)
+![Screenshot 2023-11-19 205918](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/8be5af65-4fb1-4ed7-8b89-d611086bdbea)
+![Screenshot 2023-11-19 205905](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/de11d996-8d72-45c0-9156-0cd5d3e90c61)
+ngingx:
+![Screenshot 2023-11-19 205923](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/a8bf1a2d-03de-4e42-9eb1-a4f5a36d970e)
 
+### Soal 15
+Kita menggunakan Frieren:
+![Screenshot 2023-11-19 210101](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/635667d3-bad2-46ad-8494-b0cdee4beb46)
+
+### Soal 16
+![Screenshot 2023-11-19 210106](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/c8f2b8be-d741-4d31-ae19-5a13529e6862)
+
+### Soal 17
+![Screenshot 2023-11-19 210149](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/20da12ca-4c40-43ea-92e4-6f3bf90d473e)
+
+### Soal 18
