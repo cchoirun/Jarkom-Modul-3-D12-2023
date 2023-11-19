@@ -575,7 +575,7 @@ server {
 
 Dengan memasukkan script tersebut maka hanya ada beberapa IP yang diizinkan sesuai dengan ketentuan soal.
 
-### Soal 13
+## Soal 13
 Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern. 
 ```
 echo '# This group is read both by the client and the server
@@ -601,25 +601,314 @@ jalankan command:
 ![Screenshot 2023-11-16 201107](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/d2abc88d-78dd-48b0-8e31-c099773b42ef)
 ![Screenshot 2023-11-16 201544](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/758ca6d4-7a63-45ce-a48d-3c26a6b5a10e)
 
-### Soal 14
+## Soal 14
+> Frieren, Flamme, dan Fern memiliki Granz Channel sesuai dengan quest guide berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer
+
  Pada Frieren, FLamme, dan Fern masukkan command berikut : 
 Jalankan command:
+```
+wget https://getcomposer.org/download/2.0.13/composer.phar
+chmod +x composer.phar
+mv composer.phar /usr/local/bin/composer
+```
+Kemudian kita dapat menginstall git untuk mengcloning resource yang diberikan dengan command : 
+```
+apt-get install git -y
+cd /var/www && git clone https://github.com/martuafernando/laravel-praktikum-jarkom
+cd /var/www/laravel-praktikum-jarkom && composer update
+```
+
 ![Screenshot 2023-11-19 205534](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/e2a3ea3d-1d88-4db5-88d0-10113a672f23)
 Kemudian, konfigurasi pada setiap worker:
+```
+cd /var/www/laravel-praktikum-jarkom && cp .env.example .env
+echo 'APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=192.197.2.1
+DB_PORT=3306
+DB_DATABASE=dbkelompokd12
+DB_USERNAME=kelompokd12
+DB_PASSWORD=passwordd12
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"' > /var/www/laravel-praktikum-jarkom/.env
+cd /var/www/laravel-praktikum-jarkom && php artisan key:generate
+cd /var/www/laravel-praktikum-jarkom && php artisan config:cache
+cd /var/www/laravel-praktikum-jarkom && php artisan migrate
+cd /var/www/laravel-praktikum-jarkom && php artisan db:seed
+cd /var/www/laravel-praktikum-jarkom && php artisan storage:link
+cd /var/www/laravel-praktikum-jarkom && php artisan jwt:secret
+cd /var/www/laravel-praktikum-jarkom && php artisan config:clear
+chown -R www-data.www-data /var/www/laravel-praktikum-jarkom/storage
+```
 ![Screenshot 2023-11-19 205746](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/c4bea98b-022a-4f33-833c-d53404073056)
 ![Screenshot 2023-11-19 205918](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/8be5af65-4fb1-4ed7-8b89-d611086bdbea)
 ![Screenshot 2023-11-19 205905](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/de11d996-8d72-45c0-9156-0cd5d3e90c61)
-ngingx:
+nginx:
+```
+echo 'server {
+    listen <X>;
+
+    root /var/www/laravel-praktikum-jarkom/public;
+
+    index index.php index.html index.htm;
+    server_name _;
+
+    location / {
+            try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # pass PHP scripts to FastCGI server
+    location ~ \.php$ {
+      include snippets/fastcgi-php.conf;
+      fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+    }
+
+    location ~ /\.ht {
+            deny all;
+    }
+
+    error_log /var/log/nginx/implementasi_error.log;
+    access_log /var/log/nginx/implementasi_access.log;
+}' > /etc/nginx/sites-available/laravel-worker
+```
 ![Screenshot 2023-11-19 205923](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/a8bf1a2d-03de-4e42-9eb1-a4f5a36d970e)
 
-### Soal 15
+## Soal 15
+> Granz Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire. Untuk POST /api/auth/register.
 Kita menggunakan Frieren:
+```
+echo '
+{
+  "username": "kelompokd12",
+  "password": "passwordd12"
+}' > register.json
+```
 ![Screenshot 2023-11-19 210101](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/635667d3-bad2-46ad-8494-b0cdee4beb46)
 
-### Soal 16
+## Soal 16
+> Granz Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire. Untuk POST /api/auth/login.
+Kita dapat menggunakan salah satu laravel worker semisal fern yang akan dikonfigurasi sebagai berikut :
+```
+echo '
+{
+  "username": "kelompokd12",
+  "password": "passwordd12"
+}' > login.json
+```
 ![Screenshot 2023-11-19 210106](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/c8f2b8be-d741-4d31-ae19-5a13529e6862)
 
+Lalu untuk mengeceknya kita bisa masukkan dari sisi client : 
+```
+ab -n 100 -c 10 -p login.json -T application/json http://192.197.4.1:8001/api/auth/login
+```
 ### Soal 17
-![Screenshot 2023-11-19 210149](https://github.com/revelwivanto/Jarkom-Modul-1-D12-2023/assets/116476269/20da12ca-4c40-43ea-92e4-6f3bf90d473e)
+> Granz Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire. Untuk GET /api/me
 
-### Soal 18
+Seperti sebelumnya kita akan melakukan testing apache benchmarknya pada laravel work misal Fern dan client untuk testing adalah Revolte.
+Kemudian kita perlu mengkonfigurasi untuk mendapatkan token sebelum mengakses api/me : 
+```
+curl -X POST -H "Content-Type: application/json" -d @login.json http://192.197.4.1:8001/api/auth/login > login_output.txt
+```
+Lalu jalankan command untuk melakukan set global : 
+```
+token=$(cat login_output.txt | jq -r '.token')
+```
+Lalu testing dilakukan dengan mengetikkan command ini : 
+```
+ab -n 100 -c 10 -H "Authorization: Bearer $token" http://192.197.4.1:8001/api/me
+```
+
+## Soal 18
+> Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Granz Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern.
+
+Supaya diimplementasikan secara adil maka kami menggunakan load balancing.
+Kemudian kita konfigurasi nginx sebagai berikut : 
+```
+echo 'upstream worker {
+    server 192.197.4.4:8001;
+    server 192.197.4.5:8002;
+    server 192.197.4.6:8003;
+}
+
+server {
+    listen 80;
+    server_name riegel.canyon.d12.com www.riegel.canyon.d12.com;
+
+    location / {
+        proxy_pass http://worker;
+    }
+} 
+' > /etc/nginx/sites-available/laravel-worker
+
+ln -s /etc/nginx/sites-available/laravel-worker /etc/nginx/sites-enabled/laravel-worker
+
+service nginx restart
+```
+
+## Soal 19
+
+> Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan -> pm.max_children, pm.start_servers, pm.min_spare_servers, pm.max_spare_servers sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire.
+
+Terdapat beberapa penjelasan untuk memudahkan pengerjaan soal tersebut : 
+pm.max_children menentukan jumlah maksimum pekerja PHP yang dapat berjalan bersamaan, pm.start_servers menentukan jumlah PHP worker yang akan dimulai secara otomatis ketika PHP-FPM distart,pm>min_spare_servers menentukan jumlah minimum PHP worker yang tetap berjalan saat server berjalan, pm.max_spare_Servers menentukan jumlah maksimum PHP workers yang dapat berjalan tetapi tidak menangani permintaan.
+
+Pada package manager akan dilakukan konfigurasi : 
+
+script 1 : 
+```
+# Setup Awal
+echo '[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+script 2
+```
+echo '[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 25
+pm.start_servers = 5
+pm.min_spare_servers = 3
+pm.max_spare_servers = 10' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+script 3
+```
+echo '[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 8
+pm.min_spare_servers = 5
+pm.max_spare_servers = 15' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+script 4
+```
+echo '[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+php_admin_value[disable_functions] = exec,passthru,shell_exec,system
+php_admin_flag[allow_url_fopen] = off
+
+; Choose how the process manager will control the number of child processes.
+
+pm = dynamic
+pm.max_children = 75
+pm.start_servers = 10
+pm.min_spare_servers = 5
+pm.max_spare_servers = 20' > /etc/php/8.0/fpm/pool.d/www.conf
+
+service php8.0-fpm restart
+```
+### Soal 20
+> Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second.
+
+Kita dapat menambahkan algoritma pada load balancer dengan menggunakan least-connection : 
+```
+echo 'upstream worker {
+    least_conn;
+    server 192.197.4.4:8001;
+    server 192.197.4.5:8002;
+    server 192.197.4.6:8003;
+}
+
+server {
+    listen 80;
+    server_name riegel.canyon.a09.com www.riegel.canyon.a09.com;
+
+    location / {
+        proxy_pass http://worker;
+    }
+} 
+' > /etc/nginx/sites-available/laravel-worker
+
+service nginx restart
+```
