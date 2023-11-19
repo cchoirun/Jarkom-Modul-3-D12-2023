@@ -2,7 +2,7 @@
 Laporan Resmi Modul Jarkom 3 D12 2023
 |Nama|NRP|
 |-----|-----|
-|Muhammad Revel Wivanto|5025211|
+|Muhammad Revel Wivanto|5025211233|
 |Muhammad Choirun Ni'am|5025221203|
 
 <img width="466" alt="peta_topologi" src="https://github.com/cchoirun/Jarkom-Modul-2-D12-2023/assets/115228631/d83b9271-9419-471c-bf01-a6ec1aec0fbc">
