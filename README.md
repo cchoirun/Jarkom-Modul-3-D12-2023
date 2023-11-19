@@ -401,6 +401,180 @@ echo 'server {
 
 service nginx restart
 ```
+
+## Soal 7
+>Kepala suku dari Bredt Region memberikan resource server sebagai berikut: Lawine, 4GB, 2vCPU, dan 80 GB SSD. Linie, 2GB, 2vCPU, dan 50 GB SSD. Lugner 1GB, 1vCPU, dan 25 GB SSD. Aturlah agar Eisen dapat bekerja dengan maksimal, lalu lakukan testing dengan 1000 request dan 100 request/second
+
+Sebelumnya kita perlu melakukan setup terhadap konfigurasi load balancing pada node Eisen dengan memasukkan script berikut : 
+```
+echo ';
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     riegel.canyon.d12.com. root.riegel.canyon.d12.com. (
+                        2023111401      ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      riegel.canyon.d12.com.
+@       IN      A       192.173.2.2     ; IP LB Eiken
+www     IN      CNAME   riegel.canyon.d12.com.' > /etc/bind/sites/riegel.canyon.d12.com
+
+echo '
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     granz.channel.d12.com. root.granz.channel.d12.com. (
+                        2023111401      ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      granz.channel.d12.com.
+@       IN      A       192.173.2.2     ; IP LB Eiken
+www     IN      CNAME   granz.channel.d12.com.' > /etc/bind/sites/granz.channel.d12.com
+```
+Lalu kita konfigurasi nginx pada node Eisen :
+```
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/lb_php
+
+echo ' upstream worker {
+    server 1927.197.3.4;
+    server 192.197.3.5;
+    server 192.197.3.6;
+}
+
+server {
+    listen 80;
+    server_name granz.channel.d12.com www.granz.channel.d12.com;
+
+    root /var/www/html;
+
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+        proxy_pass http://worker;
+    }
+} ' > /etc/nginx/sites-available/lb_php
+
+ln -s /etc/nginx/sites-available/lb_php /etc/nginx/sites-enabled/
+rm /etc/nginx/sites-enabled/default
+
+service nginx restart
+```
+## Soal 8
+> Karena diminta untuk menuliskan grimoire, buatlah analisis hasil testing dengan 200 request dan 10 request/second masing-masing algoritma Load Balancer dengan ketentuan sebagai berikut:
+a. Nama Algoritma Load Balancer
+b. Report hasil testing pada Apache Benchmark
+c. Grafik request per second untuk masing masing algoritma. 
+d. Analisis
+
+Seperti biasa kita lakukan setup untuk load balancing seperti nomor 7.
+
+Kemudian kita jalankan pada client Revolte command berikut : 
+```
+ab -n 200 -c 10 http://www.granz.channel.d12.com/
+```
+## Soal 9
+> Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire.
+
+Kita perlu melakukan setup pada node Eisen dan melakukan testing pada load balancer sebelumnya namun dengan 1 worker, 2 worker, dan 3 worker.
+Kemudian kita jalankan pada client Revolte command berikut : 
+```
+ab -n 100 -c 10 http://www.granz.channel.d12.com/
+```
+
+## Soal 10
+> Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
+
+Seperti biasa kita setup seperti sebelumnya kemudian lakukan konfigurasi berikut : 
+```
+mkdir /etc/nginx/rahasisakita
+htpasswd -c /etc/nginx/rahasisakita/htpasswd netics
+```
+<img width="348" alt="2023-11-19 21_17_50-LAPORAN JARKOM 3" src="https://github.com/cchoirun/Jarkom-Modul-3-D12-2023/assets/115228631/268e91c3-209d-4fd2-81e5-626b21ac19e4">
+
+Kemudian password kita masukkan ```ajkd12```. Lalu kita masukkan command pada setup nginx : 
+```
+auth_basic "Restricted Content";
+auth_basic_user_file /etc/nginx/rahasisakita/htpasswd;
+```
+## Soal 11
+> Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id.
+
+Setelah melakukan setup kemudian kita dapat memasukkan script berikut : 
+```
+echo 'upstream worker {
+    server 192.173.3.1;
+    server 192.173.3.2;
+    server 192.173.3.3;
+}
+
+server {
+    listen 80;
+    server_name granz.channel.d12.com www.granz.channel.d12.com;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    location / {
+        proxy_pass http://worker;
+    }
+
+    location ~ /its {
+        proxy_pass https://www.its.ac.id;
+        proxy_set_header Host www.its.ac.id;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}' > /etc/nginx/sites-available/lb_php
+```
+
+## Soal 12
+> Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168.
+
+Setelah melakukan setup maka kita dapat memasukkan script berikut : 
+```
+echo 'upstream worker {
+    server 192.173.3.1;
+    server 192.173.3.2;
+    server 192.173.3.3;
+}
+
+server {
+    listen 80;
+    server_name granz.channel.d12.com www.granz.channel.d12.com;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    location / {
+        allow 192.197.3.69;
+        allow 192.197.3.70;
+        allow 192.197.4.167;
+        allow 192.197.4.168;
+        deny all;
+        proxy_pass http://worker;
+    }
+
+    location /its {
+        proxy_pass https://www.its.ac.id;
+        proxy_set_header Host www.its.ac.id;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}' > /etc/nginx/sites-available/lb_php
+```
+
+Dengan memasukkan script tersebut maka hanya ada beberapa IP yang diizinkan sesuai dengan ketentuan soal.
+
 ### Soal 13
 ```
 echo '# This group is read both by the client and the server
